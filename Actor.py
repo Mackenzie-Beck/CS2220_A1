@@ -30,10 +30,14 @@ class Actor:
 #  If actors are in the same show, weight is 1
 #  If actors are in more than one show together, the weight is the number of shows they have together
     def create_actor_relations(self, actor_graph):
-        for show in self.actorShows:
-            for actor in actor_graph.actors:
-                if actor in self.actorShows:
-                    self.actor_relations[actor] += 1
+        for show in self.actorShows.keys():
+            for actor in actor_graph.actors.values():
+                for show1 in actor.actorShows.keys():
+                    if show1 == show:
+                        if actor.actorID not in self.actor_relations:
+                            self.actor_relations[actor.actorID] = 1
+                        else:
+                            self.actor_relations[actor.actorID] += 1
 
 
 # This method calculates the influence of an actor

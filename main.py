@@ -59,12 +59,22 @@ def main():
                 new_actor = Actor(actor_id, actor_name, actor_birthday, actor_character_name, {})
                 # Add the actor to the graph
                 actor_graph.add_actor(new_actor)
-            
+                
             # Add the show to the actor's shows
             actor_graph.actors[actor_id].fill_actor_shows({'id': show_id, 'premiere_year': premiere_year})
 
-    print(f"Total number of actors in the graph: {len(actor_graph.actors)}")
+    # Create relationships between actors
+    for actor in actor_graph.actors.values():
+        actor.create_actor_relations(actor_graph)
 
+    # Calculate influence for each actor
+    for actor in actor_graph.actors.values():
+        actor.calculate_influence()
+
+
+    # Print the actors in the graph
+    for actor in actor_graph.actors.values():
+        print(f"Actor ID: {actor.actorID}, Name: {actor.actorName}, Influence: {actor.influence}")
 
 if __name__ == "__main__":
     main()
