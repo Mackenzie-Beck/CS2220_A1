@@ -78,17 +78,17 @@ def main():
 
     # Create a list of tuples containing actor names and their influence
     actor_influence = [(actor.actorName, actor.influence) for actor in actor_graph.actors.values()]
-    # Sort the list by influence in descending order and take all 77 actors
-    all_77_actors = sorted(actor_influence, key=lambda x: x[1], reverse=True)
+    # Sort the list by influence in descending order and take top 5 actors
+    top_5_actors = sorted(actor_influence, key=lambda x: x[1], reverse=True)[:5]
 
-    # Create a DataFrame from all 77 actors
-    df = pd.DataFrame(all_77_actors, columns=['Actor', 'Influence'])
+    # Create a DataFrame from top 5 actors
+    df = pd.DataFrame(top_5_actors, columns=['Actor', 'Influence'])
 
     # Create the bar plot
-    plt.figure(figsize=(30, 15))  # Increased figure size for better readability of 77 actors
+    plt.figure(figsize=(12, 6))  # Adjusted figure size for 5 actors
     sns.barplot(x='Actor', y='Influence', data=df)
-    plt.title('All 77 Actors by Influence')
-    plt.xticks(rotation=90, ha='right')  # Changed rotation to 90 degrees for better fit
+    plt.title('Top 5 Actors by Influence')
+    plt.xticks(rotation=45, ha='right')  # Adjusted rotation for better readability
     plt.tight_layout()
     plt.show()
 
