@@ -3,6 +3,11 @@ import os
 import io
 from Actor import Actor
 from ActorGraph import ActorGraph
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
+import networkx as nx
+
 
 
 
@@ -70,6 +75,22 @@ def main():
     # Calculate influence for each actor
     for actor in actor_graph.actors.values():
         actor.calculate_influence()
+
+    # Create a list of tuples containing actor names and their influence
+    actor_influence = [(actor.actorName, actor.influence) for actor in actor_graph.actors.values()]
+    # Sort the list by influence in descending order and take all 77 actors
+    all_77_actors = sorted(actor_influence, key=lambda x: x[1], reverse=True)
+
+    # Create a DataFrame from all 77 actors
+    df = pd.DataFrame(all_77_actors, columns=['Actor', 'Influence'])
+
+    # Create the bar plot
+    plt.figure(figsize=(30, 15))  # Increased figure size for better readability of 77 actors
+    sns.barplot(x='Actor', y='Influence', data=df)
+    plt.title('All 77 Actors by Influence')
+    plt.xticks(rotation=90, ha='right')  # Changed rotation to 90 degrees for better fit
+    plt.tight_layout()
+    plt.show()
 
 
     # Print the actors in the graph
