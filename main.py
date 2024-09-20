@@ -114,7 +114,7 @@ file_name = "tvshows.json"
 
 
 
-# this will locate akk tge JSIB files inside the main directory and sub directories
+# this will locate all the JSON files inside the main directory and sub directories
 
 json_files = [os.path.join(root,name)
               for root, dirs, files in os.walk(os.getcwd())
@@ -179,7 +179,7 @@ def main():
 
 
     # Plot and visualize the actor network
-    #plot_actor_influence(actor_graph)
+    plot_actor_influence(actor_graph)
     visualize_actor_network(actor_graph)
 
     # Print the actors in the graph
