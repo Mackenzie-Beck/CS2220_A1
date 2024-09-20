@@ -26,6 +26,90 @@ def plot_actor_influence(actor_graph):
     plt.tight_layout()
     plt.show()
 
+
+def visualize_actor_network(actor_graph):
+    # Create a graph from the actor relationships
+    G = nx.Graph()
+
+
+    # Rank actors by influence and select top 20
+    # can change the number of actors to be displayed
+    # by changing the [:20]
+    top_actors = sorted(actor_graph.actors.values(), key=lambda x: x.influence, reverse=True)[:77]
+    
+    # Add nodes for top actors
+    for actor in top_actors:
+        G.add_node(actor.actorID, name=actor.actorName, influence=actor.influence)
+    
+    # Add edges between top actors
+    for i, actor in enumerate(top_actors):
+        for other_actor in top_actors[i+1:]:
+            if other_actor.actorID in actor.actor_relations:
+                weight = actor.actor_relations[other_actor.actorID]
+                G.add_edge(actor.actorID, other_actor.actorID, weight=weight)
+
+    # Calculate node positions
+    pos = nx.spring_layout(G, k=0.75, iterations=150)
+
+
+    # Create figure and axes
+    fig, (ax_main, ax_cbar1, ax_cbar2) = plt.subplots(1, 3, figsize=(16, 10), 
+                                                      gridspec_kw={'width_ratios': [20, 1, 1]})
+    fig.suptitle('Actor Network Visualization', fontsize=16)
+    
+    # Increase the k parameter to increase distance between nodes
+    pos = nx.spring_layout(G, k=0.75, iterations=150)
+    
+    # Correctly access node attributes
+    node_size = [3000 * G.nodes[node]['influence'] for node in G.nodes()]
+    node_color = [G.nodes[node]['influence'] for node in G.nodes()]
+    
+    # Calculate edge widths based on influence
+    edge_widths = [0.1 + 0.9 * min(G.nodes[u]['influence'], G.nodes[v]['influence']) / max(node['influence'] for node in G.nodes.values()) for u, v in G.edges()]
+    
+    # Calculate edge colors based on average influence of connected nodes
+    edge_colors = ['#%02x%02x%02x' % (int(255 * (1 - avg)), int(255 * avg), 0) for avg in 
+                   [(G.nodes[u]['influence'] + G.nodes[v]['influence']) / (2 * max(node['influence'] for node in G.nodes.values())) for u, v in G.edges()]]
+    
+    # Draw the network on the main axes
+    nx.draw(G, pos, ax=ax_main, with_labels=True, node_size=1000, node_color=node_color, alpha=0.7, 
+            edge_color=edge_colors, width=edge_widths, font_size=8, labels={node: G.nodes[node]['name'] for node in G.nodes()})
+
+    # Create a ScalarMappable object for node colors
+    # This object maps scalar data to colors
+    sm = plt.cm.ScalarMappable(cmap='coolwarm', norm=plt.Normalize(vmin=min(node_color), vmax=max(node_color)))
+    
+    # Set the array for the ScalarMappable (required for some versions of matplotlib)
+    sm.set_array([])
+    
+    # Create a colorbar for node colors using the ScalarMappable
+    # The colorbar is added to the figure using the specified axes (ax_cbar1)
+    cbar1 = fig.colorbar(sm, cax=ax_cbar1)
+    
+    # Set the label for the node color colorbar
+    cbar1.set_label('Actor Influence')
+
+    # Add color bar for edge colors
+   
+    # Create a ScalarMappable object for edge colors
+    # Using 'RdYlGn' colormap (Red-Yellow-Green) and normalizing values between 0 and 1
+    sm_edges = plt.cm.ScalarMappable(cmap='RdYlGn', norm=plt.Normalize(vmin=0, vmax=1))
+    
+    # Set the array for the ScalarMappable (required for some versions of matplotlib)
+    sm_edges.set_array([])
+    
+    # Create a colorbar for edge colors using the ScalarMappable
+    cbar2 = fig.colorbar(sm_edges, cax=ax_cbar2)
+    
+    # Set the label for the edge color colorbar
+    cbar2.set_label('Average Connected Actor Influence')
+
+    plt.tight_layout()
+    plt.show()
+    
+
+
+
 file_name = "tvshows.json"
 
 
@@ -91,11 +175,16 @@ def main():
     for actor in actor_graph.actors.values():
         actor.calculate_influence()
 
-    plot_actor_influence(actor_graph)
+
+
+
+    # Plot and visualize the actor network
+    #plot_actor_influence(actor_graph)
+    visualize_actor_network(actor_graph)
 
     # Print the actors in the graph
     for actor in actor_graph.actors.values():
-        print(f"Actor ID: {actor.actorID}, Name: {actor.actorName}, Influence: {actor.influence}")
+       print(f"Actor ID: {actor.actorID}, Name: {actor.actorName}, Influence: {actor.influence}")
 
 if __name__ == "__main__":
     main()
