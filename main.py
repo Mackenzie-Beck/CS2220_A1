@@ -9,7 +9,22 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 
+def plot_actor_influence(actor_graph):
+    # Create a list of tuples containing actor names and their influence
+    actor_influence = [(actor.actorName, actor.influence) for actor in actor_graph.actors.values()]
+    # Sort the list by influence in descending order and take top 5 actors
+    top_5_actors = sorted(actor_influence, key=lambda x: x[1], reverse=True)[:5]
 
+    # Create a DataFrame from top 5 actors
+    df = pd.DataFrame(top_5_actors, columns=['Actor', 'Influence'])
+
+    # Create the bar plot
+    plt.figure(figsize=(12, 6))  # Adjusted figure size for 5 actors
+    sns.barplot(x='Actor', y='Influence', data=df)
+    plt.title('Top 5 Actors by Influence')
+    plt.xticks(rotation=45, ha='right')  # Adjusted rotation for better readability
+    plt.tight_layout()
+    plt.show()
 
 file_name = "tvshows.json"
 
@@ -76,22 +91,7 @@ def main():
     for actor in actor_graph.actors.values():
         actor.calculate_influence()
 
-    # Create a list of tuples containing actor names and their influence
-    actor_influence = [(actor.actorName, actor.influence) for actor in actor_graph.actors.values()]
-    # Sort the list by influence in descending order and take top 5 actors
-    top_5_actors = sorted(actor_influence, key=lambda x: x[1], reverse=True)[:5]
-
-    # Create a DataFrame from top 5 actors
-    df = pd.DataFrame(top_5_actors, columns=['Actor', 'Influence'])
-
-    # Create the bar plot
-    plt.figure(figsize=(12, 6))  # Adjusted figure size for 5 actors
-    sns.barplot(x='Actor', y='Influence', data=df)
-    plt.title('Top 5 Actors by Influence')
-    plt.xticks(rotation=45, ha='right')  # Adjusted rotation for better readability
-    plt.tight_layout()
-    plt.show()
-
+    plot_actor_influence(actor_graph)
 
     # Print the actors in the graph
     for actor in actor_graph.actors.values():
@@ -99,3 +99,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
