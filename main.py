@@ -128,9 +128,7 @@ def main():
     with open(json_files[0]) as f:
         json_data = json.load(f)
 
-   # print(f"Type of json_data: {type(json_data)}")
-   # print(f"Length of json_data: {len(json_data)}")
-   # print(f"First item in json_data: {json_data[0] if json_data else 'Empty'}")
+
 
     data_shows = []
 
